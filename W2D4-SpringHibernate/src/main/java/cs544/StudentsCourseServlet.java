@@ -2,33 +2,37 @@ package cs544;
 
 import java.io.IOException;
 
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 @WebServlet(name = "StudentsCourseServlet", urlPatterns = "/StudentsCourseServlet")
 public class StudentsCourseServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	protected void doGet(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+						 HttpServletResponse response) throws ServletException, IOException {
 
 		String studentIdStr = request.getParameter("studentid");
-		
+
+		ServletContext context = getServletContext();
+		WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(context);
+
 		long studentid = -1;
 		Student student = null;
-		
+
 		if (studentIdStr != null && studentIdStr.matches("\\d+")) {
 			studentid = Long.parseLong(studentIdStr);
-			StudentService studentService = new StudentService();
+			StudentService studentService = applicationContext.getBean("studentService", StudentService.class);
 			student = studentService.getStudent(studentid);
 		}
-		
+
 		request.setAttribute("student", student);
-		request.getRequestDispatcher("student.jsp").forward(request, response);		
-
+		request.getRequestDispatcher("student.jsp").forward(request, response);
 	}
-
 }

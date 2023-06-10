@@ -1,20 +1,18 @@
 package cs544;
 
-import jakarta.persistence.EntityManager;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 
+@Service
+@Transactional(propagation = Propagation.REQUIRES_NEW)
 public class StudentService {
+
+	@Autowired
 	private StudentDAO studentdao;
 
-	public StudentService() {
-		studentdao = new StudentDAO();
-	}
-
-	public Student getStudent(long studentid) {
-		EntityManager em = EntityManagerHelper.getCurrent();
-		em.getTransaction().begin();
-		Student student = studentdao.load(studentid);
-		em.getTransaction().commit();
-		em.close();
-		return student;
+	public Student getStudent(long studentid) { 
+		return studentdao.load(studentid);
 	}
 }
